@@ -2,11 +2,19 @@ import {
   Injectable,
   ConflictException,
   UnauthorizedException,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/common/services/prisma.service';
-import { SignUp, SignIn } from './dto/auth.dto';
+import {
+  SignUp,
+  SignIn,
+  UpdateUsername,
+  ChangeUserRole,
+  BlockUser,
+} from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -96,5 +104,84 @@ export class AuthService {
     });
 
     return user;
+  }
+
+  async updateUsername(userId: string, updateUsernameDto: UpdateUsername) {
+    const { username } = updateUsernameDto;
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (existingUser && existingUser.id !== userId) {
+      throw new ConflictException('Username already exists');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { username },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        isActive: true,
+      },
+    });
+
+    return updatedUser;
+  }
+
+  async changeUserRole(changeUserRoleDto: ChangeUserRole) {
+    const { userId, role } = changeUserRoleDto;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        isActive: true,
+      },
+    });
+
+    return updatedUser;
+  }
+
+  async blockUser(blockUserDto: BlockUser) {
+    const { userId, isActive } = blockUserDto;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.role === 'ADMIN') {
+      throw new ForbiddenException('Cannot block admin users');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { isActive },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        isActive: true,
+      },
+    });
+
+    return updatedUser;
   }
 }
