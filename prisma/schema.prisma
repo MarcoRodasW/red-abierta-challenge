@@ -30,13 +30,30 @@ enum Role {
 }
 
 model Vehicle_Rates {
-  id            Int          @id @default(autoincrement())
-  vehicule_type Vehicle_Type @unique
-  hourly_Rate   Float
+  id              Int               @id @default(autoincrement())
+  vehicule_type   Vehicle_Type      @unique
+  hourly_Rate     Float
+  Parking_Records Parking_Records[]
 }
 
 enum Vehicle_Type {
   CAR
   MOTORCYCLE
   SPECIAL
+}
+
+model Parking_Records {
+  id             Int            @id @default(autoincrement())
+  license_plate  String         @db.VarChar(20)
+  vehicle_type   Vehicle_Rates  @relation(fields: [vehicle_typeId], references: [id])
+  vehicle_typeId Int
+  entry_time     DateTime       @default(now())
+  exit_time      DateTime?
+  status         Parking_Status @default(PARKED)
+  total_cost     Float
+}
+
+enum Parking_Status {
+  PARKED
+  EXITED
 }

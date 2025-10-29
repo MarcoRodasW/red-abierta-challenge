@@ -17,9 +17,9 @@ import { AdminGuard } from '../auth/guards/admin.guard';
 import { Admin } from '../auth/decorators/admin.decorator';
 import { ZodResponse } from 'nestjs-zod';
 
-@ApiTags('vehicle-rates')
 @UseGuards(AuthGuard, AdminGuard)
 @Controller('vehicle-rates')
+@ApiTags('Vehicles Rates')
 export class VehicleRatesController {
   constructor(private readonly vehicleRatesService: VehicleRatesService) {}
 

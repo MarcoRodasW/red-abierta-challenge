@@ -6,8 +6,8 @@ import { Public } from './decorators/public.decorator';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ZodResponse } from 'nestjs-zod';
 
-@ApiTags('auth')
 @Controller('auth')
+@ApiTags('Authentication')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
