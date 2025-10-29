@@ -28,11 +28,15 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Check if this is the first user in the database
+    const userCount = await this.prisma.user.count();
+    const isFirstUser = userCount === 0;
+
     const user = await this.prisma.user.create({
       data: {
         username,
         password: hashedPassword,
-        role: 'USER',
+        role: isFirstUser ? 'ADMIN' : 'USER',
         isActive: true,
       },
       select: {
