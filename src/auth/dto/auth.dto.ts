@@ -1,0 +1,33 @@
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
+
+export enum Role {
+  ADMIN,
+  USER,
+}
+
+const RoleSchema = z.enum(['ADMIN', 'USER']);
+
+export const SignInSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+});
+
+export const SignUpSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  password: z.string().min(3, 'Password must be at least 3 characters'),
+});
+
+export const UserSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  role: RoleSchema,
+  isActive: z.boolean(),
+});
+
+export class SignInDTO extends createZodDto(SignInSchema) {}
+export class SignUpDTO extends createZodDto(SignUpSchema) {}
+export class UserDTO extends createZodDto(UserSchema) {}
+
+export type SignIn = z.infer<typeof SignInSchema>;
+export type SignUp = z.infer<typeof SignUpSchema>;
