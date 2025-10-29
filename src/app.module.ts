@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
+import { VehicleRatesModule } from './vehicle_rates/vehicle_rates.module';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { HttpExceptionFilter } from './common/pipes/http-exception-filter';
@@ -13,6 +14,7 @@ import { HttpExceptionFilter } from './common/pipes/http-exception-filter';
     }),
     CommonModule,
     AuthModule,
+    VehicleRatesModule,
   ],
   controllers: [],
   providers: [

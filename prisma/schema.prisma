@@ -14,8 +14,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
   id        String   @id @default(uuid())
   username  String   @unique
@@ -29,4 +27,16 @@ model User {
 enum Role {
   ADMIN
   USER
+}
+
+model Vehicle_Rates {
+  id            Int          @id @default(autoincrement())
+  vehicule_type Vehicle_Type @unique
+  hourly_Rate   Float
+}
+
+enum Vehicle_Type {
+  CAR
+  MOTORCYCLE
+  SPECIAL
 }
